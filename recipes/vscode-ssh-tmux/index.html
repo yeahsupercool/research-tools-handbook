@@ -1,0 +1,997 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://yeahsupercool.github.io/research-tools-handbook/recipes/vscode-ssh-tmux/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>VS Code + SSH + tmux - research-tools-handbook</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vs-code-remote-ssh-tmux" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="research-tools-handbook" class="md-header__button md-logo" aria-label="research-tools-handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            research-tools-handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              VS Code + SSH + tmux
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="research-tools-handbook" class="md-nav__button md-logo" aria-label="research-tools-handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    research-tools-handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Remote Dev
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Remote Dev
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VS Code + SSH + tmux
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VS Code + SSH + tmux
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vscodessh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        如何在vscode上面连接远程服务器ssh？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="如何在vscode上面连接远程服务器ssh？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1）添加主机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) 连接主机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 打开远程文件夹
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) 打开远程终端
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-vscode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在同一远程主机上通过不同端口做多路 SSH 连接，并在 VSCode 中同时打开同一目录
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在同一远程主机上通过不同端口做多路 SSH 连接，并在 VSCode 中同时打开同一目录">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原因
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决方案（为每个端口定义不同的 Host 别名）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vscode-ssh-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在 VSCode 远程（SSH）环境中使用 tmux 运行与监控任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在 VSCode 远程（SSH）环境中使用 tmux 运行与监控任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vscode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 连接确认（VSCode 端）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) 安装与启动 tmux（云端执行）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 在 tmux 中运行脚本
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) 在 tmux 中运行脚本">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        获取 Python 解释器的绝对路径
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在运行代码之前，先检查一下是否已经挂到了tmux里面
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在运行代码之前，先检查一下是否已经挂到了tmux里面">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        直接用解释器绝对路径运行脚本
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) 挂起 / 重连 / 查看日志 等操作方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#vscodessh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        如何在vscode上面连接远程服务器ssh？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="如何在vscode上面连接远程服务器ssh？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1）添加主机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) 连接主机
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 打开远程文件夹
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) 打开远程终端
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-vscode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在同一远程主机上通过不同端口做多路 SSH 连接，并在 VSCode 中同时打开同一目录
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在同一远程主机上通过不同端口做多路 SSH 连接，并在 VSCode 中同时打开同一目录">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原因
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        解决方案（为每个端口定义不同的 Host 别名）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vscode-ssh-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在 VSCode 远程（SSH）环境中使用 tmux 运行与监控任务
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在 VSCode 远程（SSH）环境中使用 tmux 运行与监控任务">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-vscode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1) 连接确认（VSCode 端）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2) 安装与启动 tmux（云端执行）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3) 在 tmux 中运行脚本
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3) 在 tmux 中运行脚本">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        获取 Python 解释器的绝对路径
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        在运行代码之前，先检查一下是否已经挂到了tmux里面
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="在运行代码之前，先检查一下是否已经挂到了tmux里面">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        直接用解释器绝对路径运行脚本
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4) 挂起 / 重连 / 查看日志 等操作方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="vs-code-remote-ssh-tmux">VS Code Remote SSH + tmux：在云服务器稳定跑任务（断线不掉）</h1>
+<h2 id="vscodessh">如何在vscode上面连接远程服务器ssh？</h2>
+<h3 id="1">1）添加主机</h3>
+<ul>
+<li><code>Ctrl+Shift+P</code> -&gt; 输入 <code>Remote-SSH:Add NewSSH Host</code> -&gt; 粘贴ssh命令 <code>ssh&lt;user&gt;@&lt;host&gt;-i&lt;path/to/key.pem&gt;</code>-&gt; 选择保存到 <code>~/.ssh/config</code> (Windows中为 <code>C:\Users\YourUserName\.ssh\config</code>)</li>
+</ul>
+<h3 id="2">2) 连接主机</h3>
+<ul>
+<li><code>Ctrl+Shift+P</code> -&gt; <code>Remote-ssH:Connect to Host</code> -&gt; 选刚添加的主机</li>
+<li>第一次会自动安装 VSCode Server，按提示确认。</li>
+<li>Select the platform for the remote host: 选择Linux即可</li>
+</ul>
+<h3 id="3">3) 打开远程文件夹</h3>
+<ul>
+<li>找到 open Folder按钮 -&gt; 选服务器上的项目目录（比如矩池云上的工作目录为<code>/mnt</code>)</li>
+</ul>
+<h3 id="4">4) 打开远程终端</h3>
+<ul>
+<li><code>Ctrl+[反引号]</code> 打开终端(此时终端已在远程服务器上)。</li>
+</ul>
+<h2 id="ssh-vscode">在同一远程主机上通过不同端口做多路 SSH 连接，并在 VSCode 中同时打开同一目录</h2>
+<h3 id="_1">问题</h3>
+<ul>
+<li>在云平台上，同一台服务器通过不同的 SSH 端口对外提供访问。虽然用于登录的 SSH 命令不同（端口不同），但 HostName 相同。如果在 VSCode Remote-SSH 中直接使用相同的 Host 标识（或未区分端口的同名主机），VSCode 往往会复用同一远程目标，导致无法在两个独立 VSCode 窗口中同时打开同一台机器上的同一目录。</li>
+</ul>
+<h3 id="_2">原因</h3>
+<ul>
+<li>VSCode Remote-SSH 以 ~/.ssh/config 中的 Host 别名（而非 HostName/IP）标识远程目标。若两个连接使用同一个 Host 别名（即使端口不同），VSCode 可能把它们视为同一远程，从而复用连接/窗口。</li>
+</ul>
+<h3 id="host">解决方案（为每个端口定义不同的 Host 别名）</h3>
+<ul>
+<li>在本机 ~/.ssh/config 中为每个端口配置独立的 Host 条目（不同别名、相同 HostName、不同 Port）</li>
+<li>Add NewSSH Host之后，打开config文件（右下角会出现弹窗，包含Open Config按钮，点击即可；当然也可以手动找到这个文件在电脑上的位置，然后打开）</li>
+<li>config文件内容类似如下代码，修改第一行Host 后面的端口别名即可。在接下来选择Connect to Host的时候，选择该端口即可。</li>
+</ul>
+<pre><code class="language-bash"># 端口 A
+Host gpu-a
+  HostName hz-4.matpool.com
+  Port 26964
+  User root
+  IdentityFile ~/.ssh/mykey.pem
+
+# 端口 B
+Host gpu-b
+  HostName hz-4.matpool.com
+  Port 27001
+  User root
+  IdentityFile ~/.ssh/mykey.pem
+</code></pre>
+<ul>
+<li>这样，gpu-a 与 gpu-b 被 VSCode 视为两个独立远程目标，可以在两个 VSCode 窗口中分别连接，并同时打开同一远程路径（例如 /mnt）。</li>
+</ul>
+<h2 id="vscode-ssh-tmux">在 VSCode 远程（SSH）环境中使用 tmux 运行与监控任务</h2>
+<h3 id="1-vscode">1) 连接确认（VSCode 端）</h3>
+<ul>
+<li>连接成功后，左下角应显示：SSH: &lt;主机名&gt;（表示当前窗口已在远程）。</li>
+<li>打开云端终端：按 <code>Ctrl +(反引号)</code>。这是云服务器上的终端，可直接跑命令。</li>
+<li>自检命令（确认确实在云端）:</li>
+</ul>
+<pre><code class="language-bash">whoami                 # 应是服务器用户名，如 ubuntu/root
+hostname               # 服务器主机名
+pwd                    # 应在远程路径，如 /home/ubuntu/...
+echo $SSH_CONNECTION   # 有输出表示通过 SSH 连接
+</code></pre>
+<h3 id="2-tmux">2) 安装与启动 tmux（云端执行）</h3>
+<pre><code class="language-bash"># 一次性安装
+sudo apt-get update &amp;&amp; sudo apt-get install -y tmux
+# 新建 tmux 会话
+tmux new -s job  # job为会话名称，可以更改为其他名称
+# 输出形如：anti-foreign: 1 windows (created Tue Nov  4 16:06:01 2025) (attached)
+
+# 若已经创建过对话了，可以无需创建新会话。
+# 首先，查看现有会话
+tmux ls
+# 然后重新接入会话（eg. 接入job会话）
+# 首先需要先在还没有终止会话的时候，`tmux ls`查看一下会话名称，确保知道哪个是正在运行的会话，然后再打开一个新的终端New Terminal，输入`tmux attach -t job`，即可进入之前这个会话的终端界面。
+tmux attach -t job  # 输出为sessions should be nested with care, unset $TMUX to force
+# 检查是否入成功
+echo $TMUX   # 若有输出，则当前shell已经在tmux会话里；在这个终端里启动的任何命令/脚本，即使 SSH 断开，也会继续在服务器上运行。
+</code></pre>
+<h3 id="3-tmux">3) 在 tmux 中运行脚本</h3>
+<pre><code class="language-bash"># 进入项目目录（若 VSCode 以此目录打开，可省略）
+# 例如：
+cd /mnt 
+</code></pre>
+<h4 id="python">获取 Python 解释器的绝对路径</h4>
+<pre><code class="language-bash">python -c &quot;import sys; print(sys.executable)&quot;
+# 示例输出：
+/root/miniconda3/envs/myconda/bin/python
+</code></pre>
+<h3 id="tmux">在运行代码之前，先检查一下是否已经挂到了tmux里面</h3>
+<ul>
+<li>输入<code>echo #TMUX</code>，若有输出，则表明已经在tmux中</li>
+</ul>
+<h4 id="_3">直接用解释器绝对路径运行脚本</h4>
+<pre><code class="language-bash"># 例如：
+# Python解释器的绝对路径+换行符+需要运行的脚本+输出日志
+/root/miniconda3/envs/myconda/bin/python \
+run_model_ratio_contribution.py \
+| tee -a logs-contribution.txt
+</code></pre>
+<ul>
+<li>注意，这里的'logs.txt'可以直接换成其他名字，因为放在同一个文件夹中，不同代码运行的产出可能会交错。</li>
+</ul>
+<h3 id="4_1">4) 挂起 / 重连 / 查看日志 等操作方式</h3>
+<ul>
+<li>快捷键挺方便的， 想要后台运行Python代码（关电脑、断线都不会中断），输入：<code>m</code> 便可执行相关内容，比如查看正在运行进程，通过PID终止进程等。</li>
+</ul>
+<pre><code class="language-bash">tmux ls                    # 查看会话列表
+tmux attach -t job         # 重新接入会话，回到实时输出窗口
+tail -f logs.txt           # 实时查看日志
+tail -n 100 -f logs.txt   # 查看最后100条日志
+Ctrl + b，松开，接着按下 d 键  # detach某个会话
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
