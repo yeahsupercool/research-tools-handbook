@@ -1,1 +1,8 @@
-site_name: My Docs
+site_name: research-tools-handbook
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Remote Dev:
+      - VS Code + SSH + tmux: recipes/vscode-ssh-tmux.md
