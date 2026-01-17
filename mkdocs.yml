@@ -1,7 +1,7 @@
 site_name: research-tools-handbook
 theme:
   name: material
-
+site_url: https://yeahsupercool.github.io/research-tools-handbook/
 nav:
   - Home: index.md
   - Remote Dev:
